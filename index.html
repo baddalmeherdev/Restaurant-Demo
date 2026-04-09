@@ -1,0 +1,2257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============================================================
+    🏷️ CLIENT DATA: CHANGE RESTAURANT NAME & SEO META HERE
+  ============================================================ -->
+  <title>Royal Biryani House — Taste the Royal Legacy</title>
+  <meta name="description" content="Royal Biryani House — Authentic Mughal cuisine crafted from century-old recipes. Dine, order, and experience luxury."/>
+  <meta name="theme-color" content="#0C0A08" />
+
+  <!-- ============================================================
+    🔤 GOOGLE FONTS CDN — CLIENT DATA: CHANGE FONTS HERE IF NEEDED
+    Current: Playfair Display (headings) + DM Sans (body) + Cormorant Garamond (accents)
+  ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet"/>
+
+  <!-- Font Awesome 6 CDN (icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <!-- ============================================================
+    📦 THREE.JS ECOSYSTEM CDNs (r128) — DO NOT CHANGE
+    Order matters: Three core → OrbitControls → GLTFLoader
+  ============================================================ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js" defer></script>
+
+  <style>
+    /* ┌─────────────────────────────────────────────────────────────┐
+       │  🎨 CLIENT DATA: CHANGE ALL BRAND COLORS HERE              │
+       │  These CSS variables drive every color on the entire site.  │
+       └─────────────────────────────────────────────────────────────┘ */
+    :root {
+      /* 🎨 CLIENT DATA: CHANGE PRIMARY BRAND COLOR (main gold/accent) HERE */
+      --clr-gold:          #D4A84B;
+      --clr-gold-light:    #E8C87A;
+      --clr-gold-dark:     #9E7420;
+      --clr-gold-glow:     rgba(212, 168, 75, 0.30);
+      --clr-gold-glow-sm:  rgba(212, 168, 75, 0.15);
+
+      /* 🎨 CLIENT DATA: CHANGE BACKGROUND / DARK COLORS HERE */
+      --clr-bg:            #0C0A08;
+      --clr-bg-2:          #131009;
+      --clr-bg-3:          #1A1510;
+      --clr-bg-card:       rgba(255,255,255,0.042);
+
+      /* 🎨 CLIENT DATA: CHANGE ACCENT / SPICE COLOR HERE */
+      --clr-spice:         #C0481A;
+      --clr-spice-dark:    #7A2A08;
+
+      /* Text */
+      --clr-text:          #F0E8D8;
+      --clr-text-muted:    #9A8870;
+      --clr-text-dim:      #5C5040;
+      --clr-white:         #FFFFFF;
+
+      /* Glass */
+      --glass-bg:          rgba(20, 15, 8, 0.55);
+      --glass-border:      rgba(212, 168, 75, 0.18);
+      --glass-blur:        blur(8px);   /* ← MAX 8px per spec */
+
+      /* 🎨 CLIENT DATA: CHANGE FONT FAMILIES HERE */
+      --font-display:      'Playfair Display', Georgia, serif;
+      --font-accent:       'Cormorant Garamond', Georgia, serif;
+      --font-body:         'DM Sans', system-ui, sans-serif;
+
+      /* Spacing & shape */
+      --radius-xl:         24px;
+      --radius-lg:         16px;
+      --radius-md:         10px;
+      --radius-sm:         6px;
+      --radius-pill:       999px;
+
+      /* Motion */
+      --ease-out:          cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-bounce:       cubic-bezier(0.34, 1.56, 0.64, 1);
+      --dur-fast:          0.22s;
+      --dur-mid:           0.40s;
+      --dur-slow:          0.70s;
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       RESET & BASE
+    ════════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      overflow-x: hidden;
+      line-height: 1.65;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--clr-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--clr-gold-dark); border-radius: 99px; }
+
+    img { display: block; max-width: 100%; }
+    a   { color: inherit; text-decoration: none; }
+    ul  { list-style: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+    /* ════════════════════════════════════════════════════════════
+       UTILITY CLASSES
+    ════════════════════════════════════════════════════════════ */
+    .container { max-width: 1220px; margin-inline: auto; padding-inline: clamp(20px, 5vw, 60px); }
+    .sr-only   { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+    /* Section layout */
+    .section { padding-block: clamp(70px, 10vw, 120px); }
+
+    /* Section heading block */
+    .section-head          { text-align: center; margin-bottom: clamp(40px, 6vw, 70px); }
+    .section-head__eyebrow {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--clr-gold);
+      margin-bottom: 12px;
+    }
+    .section-head__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4.5vw, 3.4rem);
+      font-weight: 700;
+      color: var(--clr-white);
+      line-height: 1.12;
+      margin-bottom: 14px;
+    }
+    .section-head__title em { font-style: italic; color: var(--clr-gold); }
+    .section-head__sub {
+      font-family: var(--font-accent);
+      font-style: italic;
+      font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+      color: var(--clr-text-muted);
+      max-width: 500px;
+      margin-inline: auto;
+    }
+
+    /* Ornament divider */
+    .ornament {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      margin-block: 16px;
+    }
+    .ornament__line {
+      flex: 1; max-width: 80px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--clr-gold));
+    }
+    .ornament__line--rev { background: linear-gradient(90deg, var(--clr-gold), transparent); }
+    .ornament__gem {
+      width: 7px; height: 7px;
+      background: var(--clr-gold);
+      transform: rotate(45deg);
+      box-shadow: 0 0 8px var(--clr-gold-glow);
+    }
+
+    /* Scroll-reveal */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out); }
+    .reveal.in { opacity: 1; transform: none; }
+    .reveal[data-delay="1"] { transition-delay: 0.10s; }
+    .reveal[data-delay="2"] { transition-delay: 0.20s; }
+    .reveal[data-delay="3"] { transition-delay: 0.30s; }
+    .reveal[data-delay="4"] { transition-delay: 0.40s; }
+    .reveal[data-delay="5"] { transition-delay: 0.50s; }
+    .reveal[data-delay="6"] { transition-delay: 0.60s; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      padding: 14px 30px; border-radius: var(--radius-pill);
+      transition: transform var(--dur-fast) var(--ease-bounce),
+                  box-shadow var(--dur-mid) ease,
+                  background var(--dur-mid) ease;
+      white-space: nowrap;
+    }
+    .btn--primary {
+      background: linear-gradient(135deg, var(--clr-gold-dark), var(--clr-gold) 55%, var(--clr-gold-light));
+      color: #0C0A08;
+      box-shadow: 0 4px 24px var(--clr-gold-glow);
+    }
+    .btn--primary:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(212,168,75,0.45); }
+    .btn--ghost {
+      background: rgba(255,255,255,0.055);
+      color: var(--clr-text);
+      border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .btn--ghost:hover { border-color: var(--clr-gold); color: var(--clr-gold); transform: translateY(-3px); }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ PRELOADER
+    ════════════════════════════════════════════════════════════ */
+    #preloader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--clr-bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 24px;
+      transition: opacity 0.6s var(--ease-out), visibility 0.6s;
+    }
+    #preloader.out { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .pre__logo {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: 700;
+      color: var(--clr-gold);
+      letter-spacing: 0.06em;
+      text-align: center;
+      animation: pre-pulse 1.8s ease-in-out infinite;
+    }
+    .pre__crown { font-size: 1.1em; filter: drop-shadow(0 0 10px var(--clr-gold)); }
+
+    .pre__ring {
+      width: 52px; height: 52px;
+      border: 2px solid rgba(212,168,75,0.12);
+      border-top-color: var(--clr-gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    .pre__tagline {
+      font-family: var(--font-accent);
+      font-style: italic;
+      color: var(--clr-text-muted);
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pre-pulse {
+      0%,100% { opacity: .65; }
+      50% { opacity: 1; text-shadow: 0 0 28px var(--clr-gold-glow); }
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ NAVBAR
+    ════════════════════════════════════════════════════════════ */
+    #navbar {
+      position: fixed; top: 0; inset-inline: 0;
+      z-index: 800;
+      padding: 22px clamp(20px, 5vw, 60px);
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background var(--dur-mid) ease, padding var(--dur-mid) ease, box-shadow var(--dur-mid) ease;
+    }
+    #navbar.scrolled {
+      padding-block: 14px;
+      background: var(--glass-bg);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border-bottom: 1px solid var(--glass-border);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.55);
+    }
+
+    .nav__logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--clr-gold);
+      letter-spacing: 0.04em;
+    }
+    .nav__logo-icon { font-size: 1.5rem; filter: drop-shadow(0 0 6px var(--clr-gold-glow)); }
+
+    .nav__links {
+      display: flex; align-items: center; gap: 34px;
+    }
+    .nav__links a {
+      font-size: 0.75rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--clr-text); position: relative;
+      transition: color var(--dur-fast);
+    }
+    .nav__links a::after {
+      content: ''; position: absolute;
+      left: 0; bottom: -3px;
+      width: 0; height: 1px;
+      background: var(--clr-gold);
+      transition: width var(--dur-mid) var(--ease-out);
+    }
+    .nav__links a:hover { color: var(--clr-gold); }
+    .nav__links a:hover::after { width: 100%; }
+    .nav__links .btn { padding: 9px 20px; font-size: 0.72rem; }
+
+    /* Hamburger */
+    .nav__burger {
+      display: none; flex-direction: column; gap: 5px;
+      padding: 6px; cursor: pointer;
+    }
+    .nav__burger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--clr-gold); border-radius: 2px;
+      transition: transform var(--dur-mid) var(--ease-out), opacity var(--dur-fast);
+    }
+    .nav__burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav__burger.open span:nth-child(2) { opacity: 0; }
+    .nav__burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile nav */
+    .nav__mobile {
+      display: none;
+      position: fixed; inset: 0; z-index: 790;
+      background: rgba(10,8,5,0.97);
+      backdrop-filter: blur(6px);
+      flex-direction: column; align-items: center; justify-content: center; gap: 36px;
+    }
+    .nav__mobile.open { display: flex; }
+    .nav__mobile a {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 5vw, 2.2rem);
+      color: var(--clr-text); letter-spacing: 0.05em;
+      transition: color var(--dur-fast);
+    }
+    .nav__mobile a:hover { color: var(--clr-gold); }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ HERO
+    ════════════════════════════════════════════════════════════ */
+    #hero {
+      position: relative;
+      height: 100svh; min-height: 680px;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; overflow: hidden;
+    }
+
+    .hero__bg {
+      position: absolute; inset: 0;
+      /* 🎨 CLIENT DATA: CHANGE HERO BACKGROUND IMAGE URL HERE */
+      background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=1920&q=85&auto=format&fit=crop');
+      background-size: cover; background-position: center;
+      animation: hero-zoom 20s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+    @keyframes hero-zoom {
+      from { transform: scale(1); }
+      to   { transform: scale(1.07); }
+    }
+
+    .hero__overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(12,10,8,0.28) 0%,
+        rgba(12,10,8,0.52) 45%,
+        rgba(12,10,8,0.88) 100%
+      );
+    }
+
+    /* Elegant decorative border corners */
+    .hero__frame {
+      position: absolute; inset: 28px;
+      border: 1px solid rgba(212,168,75,0.14);
+      pointer-events: none; z-index: 2;
+    }
+    .hero__frame::before, .hero__frame::after {
+      content: ''; position: absolute;
+      width: 50px; height: 50px;
+      border-color: var(--clr-gold); border-style: solid;
+    }
+    .hero__frame::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .hero__frame::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .hero__content {
+      position: relative; z-index: 3;
+      padding-inline: 24px; max-width: 860px;
+    }
+
+    .hero__badge {
+      display: inline-block;
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--clr-gold);
+      border: 1px solid rgba(212,168,75,0.3);
+      padding: 7px 22px; border-radius: var(--radius-pill);
+      background: rgba(212,168,75,0.08);
+      backdrop-filter: blur(4px);
+      margin-bottom: 22px;
+      animation: fadeUp 0.9s var(--ease-out) 0.1s both;
+    }
+    .hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 8vw, 7rem);
+      font-weight: 900; line-height: 1.04;
+      color: var(--clr-white); margin-bottom: 18px;
+      animation: fadeUp 0.9s var(--ease-out) 0.25s both;
+    }
+    /* 🎨 CLIENT DATA: CHANGE HERO TITLE GOLD WORD HERE */
+    .hero__title .gold { color: var(--clr-gold); }
+
+    .hero__tagline {
+      font-family: var(--font-accent);
+      font-style: italic; font-size: clamp(1rem, 2vw, 1.5rem);
+      color: rgba(240,232,216,0.82);
+      letter-spacing: 0.03em; margin-bottom: 40px;
+      animation: fadeUp 0.9s var(--ease-out) 0.4s both;
+    }
+    .hero__ctas {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp 0.9s var(--ease-out) 0.55s both;
+    }
+
+    /* Scroll cue */
+    .hero__scroll {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      animation: fadeUp 1s var(--ease-out) 1s both;
+    }
+    .hero__scroll-text { font-size: 0.6rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--clr-text-dim); }
+    .hero__scroll-line {
+      width: 1px; height: 46px;
+      background: linear-gradient(to bottom, var(--clr-gold), transparent);
+      animation: line-pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes line-pulse { 0%,100%{opacity:.4;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.15)} }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ ABOUT SECTION
+    ════════════════════════════════════════════════════════════ */
+    #about { background: var(--clr-bg-2); }
+
+    .about__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 6vw, 90px);
+      align-items: center;
+    }
+
+    .about__img-wrap {
+      position: relative;
+      border-radius: var(--radius-xl); overflow: visible;
+    }
+    .about__img-wrap img {
+      width: 100%; height: clamp(320px, 45vw, 520px);
+      object-fit: cover; border-radius: var(--radius-xl);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    /* Gold frame shadow */
+    .about__img-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: var(--radius-xl);
+      box-shadow: 18px 18px 0 0 rgba(212,168,75,0.12);
+      pointer-events: none;
+    }
+    /* Legacy badge */
+    .about__badge {
+      position: absolute;
+      bottom: -20px; right: -20px;
+      background: linear-gradient(140deg, var(--clr-gold-dark), var(--clr-gold));
+      color: #0C0A08;
+      border-radius: var(--radius-lg);
+      padding: 18px 22px; text-align: center;
+      box-shadow: 0 8px 32px rgba(212,168,75,0.4);
+    }
+    /* 🎨 CLIENT DATA: CHANGE "YEARS" NUMBER HERE */
+    .about__badge-num  { display: block; font-family: var(--font-display); font-size: 2.2rem; font-weight: 900; line-height: 1; }
+    .about__badge-text { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 4px; }
+
+    .about__text .section-head { text-align: left; margin-bottom: 24px; }
+    .about__text .ornament      { justify-content: flex-start; }
+
+    .about__body {
+      color: var(--clr-text-muted); font-size: 0.95rem;
+      line-height: 1.85; margin-bottom: 20px;
+    }
+
+    .about__stats {
+      display: flex; gap: 32px; margin-top: 36px;
+      padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.06);
+      flex-wrap: wrap;
+    }
+    .stat__num {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 2.2rem; font-weight: 700; color: var(--clr-gold);
+    }
+    .stat__lbl { font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--clr-text-dim); margin-top: 4px; }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ MENU SECTION
+    ════════════════════════════════════════════════════════════ */
+    #menu { background: var(--clr-bg); }
+
+    /* Tab bar */
+    .menu__tabs {
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 52px;
+    }
+    .menu__tab {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      padding: 10px 24px; border-radius: var(--radius-pill);
+      border: 1px solid rgba(212,168,75,0.16);
+      color: var(--clr-text-muted);
+      transition: all var(--dur-mid) var(--ease-out);
+    }
+    .menu__tab:hover { color: var(--clr-text); border-color: rgba(212,168,75,0.35); }
+    .menu__tab.active {
+      background: linear-gradient(135deg, var(--clr-gold-dark), var(--clr-gold));
+      color: #0C0A08; border-color: transparent;
+      box-shadow: 0 4px 20px var(--clr-gold-glow);
+    }
+
+    /* Category panels */
+    .menu__panel { display: none; }
+    .menu__panel.active { display: block; }
+
+    .menu__category-label {
+      font-family: var(--font-display);
+      font-size: 1.3rem; font-style: italic;
+      color: var(--clr-gold);
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(212,168,75,0.1);
+    }
+
+    /* Card grid */
+    .menu__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 24px;
+    }
+
+    /* ─── GLASSMORPHISM MENU CARD ─── */
+    .menu-card {
+      background: var(--clr-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      transition:
+        transform var(--dur-mid) var(--ease-bounce),
+        box-shadow var(--dur-mid) ease,
+        border-color var(--dur-mid) ease;
+      position: relative;
+    }
+    .menu-card::before { /* Hover gold sheen */
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(212,168,75,0.07), transparent 60%);
+      opacity: 0; transition: opacity var(--dur-mid);
+      pointer-events: none; z-index: 1;
+    }
+    .menu-card:hover {
+      transform: translateY(-9px);
+      box-shadow: 0 20px 56px rgba(0,0,0,0.5), 0 0 36px var(--clr-gold-glow-sm);
+      border-color: rgba(212,168,75,0.4);
+    }
+    .menu-card:hover::before { opacity: 1; }
+
+    /* Card image */
+    .menu-card__img-wrap { position: relative; overflow: hidden; height: 195px; }
+    .menu-card__img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s var(--ease-out);
+    }
+    .menu-card:hover .menu-card__img { transform: scale(1.07); }
+
+    /* Veg / Non-Veg badge */
+    .menu-card__diet {
+      position: absolute; top: 12px; right: 12px; z-index: 2;
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      font-size: 0.6rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .diet--veg    { background: rgba(34,197,94,0.18); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+    .diet--nonveg { background: rgba(239,68,68,0.18);  color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+
+    /* Card body */
+    .menu-card__body { padding: 18px 18px 14px; position: relative; z-index: 2; }
+
+    .menu-card__header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+    .menu-card__name  { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--clr-white); line-height: 1.25; }
+    .menu-card__price { font-size: 1.05rem; font-weight: 700; color: var(--clr-gold); white-space: nowrap; }
+
+    .menu-card__desc { font-size: 0.8rem; color: var(--clr-text-muted); line-height: 1.6; margin-bottom: 14px; }
+
+    /* Card footer: stars + buttons */
+    .menu-card__footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .menu-card__stars  { color: var(--clr-gold); font-size: 0.72rem; letter-spacing: 0.1em; }
+
+    .menu-card__actions { display: flex; gap: 8px; }
+
+    /* "Add +" button */
+    .btn-add {
+      background: linear-gradient(135deg, var(--clr-gold-dark), var(--clr-gold));
+      color: #0C0A08;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 7px 16px; border-radius: var(--radius-pill);
+      transition: transform var(--dur-fast) var(--ease-bounce), box-shadow var(--dur-mid);
+    }
+    .btn-add:hover { transform: scale(1.07); box-shadow: 0 4px 14px var(--clr-gold-glow); }
+
+    /* "3D View" button */
+    .btn-3d {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(255,255,255,0.07);
+      color: var(--clr-text);
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 7px 14px; border-radius: var(--radius-pill);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .btn-3d i { font-size: 0.78rem; color: var(--clr-gold); }
+    .btn-3d:hover { border-color: var(--clr-gold); color: var(--clr-gold); background: rgba(212,168,75,0.08); }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ 3D MODEL MODAL
+    ════════════════════════════════════════════════════════════ */
+    #modal-3d {
+      display: none;
+      position: fixed; inset: 0; z-index: 1800;
+      align-items: center; justify-content: center;
+    }
+    #modal-3d.open { display: flex; }
+
+    .modal-3d__backdrop {
+      position: absolute; inset: 0;
+      background: rgba(6,4,2,0.9);
+      backdrop-filter: blur(6px);
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .modal-3d__box {
+      position: relative; z-index: 1;
+      width: min(700px, 96vw);
+      background: #0e0c09;
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.7), 0 0 50px var(--clr-gold-glow-sm);
+      animation: slideUp 0.4s var(--ease-out);
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(40px) scale(0.96)} to{opacity:1;transform:none} }
+
+    .modal-3d__header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px;
+      border-bottom: 1px solid rgba(212,168,75,0.12);
+    }
+    /* This h3 is dynamically updated by JS with the dish name */
+    #modal-dish-title {
+      font-family: var(--font-display);
+      font-size: 1.2rem; color: var(--clr-gold);
+    }
+    .modal-3d__close {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%; color: var(--clr-text);
+      font-size: 1rem;
+      transition: all var(--dur-fast);
+    }
+    .modal-3d__close:hover { background: rgba(212,168,75,0.2); color: var(--clr-gold); border-color: var(--clr-gold); }
+
+    /* Three.js render target */
+    #three-container {
+      position: relative;
+      width: 100%; height: clamp(300px, 50vw, 440px);
+      background: #0d0b07; /* Force very dark — never flashes white */
+    }
+    #three-canvas { display: block; width: 100% !important; height: 100% !important; }
+
+    /* ─── Loading overlay inside the modal ─── */
+    #model-loader {
+      position: absolute; inset: 0; z-index: 10;
+      background: #0d0b07;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 18px;
+      transition: opacity 0.5s ease;
+    }
+    #model-loader.hidden { opacity: 0; pointer-events: none; }
+
+    .loader__ring {
+      width: 48px; height: 48px;
+      border: 2px solid rgba(212,168,75,0.12);
+      border-top-color: var(--clr-gold);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+    .loader__text {
+      font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--clr-text-muted);
+    }
+    /* This span is updated by the GLTFLoader onProgress callback */
+    #loader-pct { color: var(--clr-gold); margin-left: 4px; }
+
+    .modal-3d__footer {
+      padding: 13px 22px; text-align: center;
+      border-top: 1px solid rgba(212,168,75,0.08);
+    }
+    .modal-3d__footer p { font-size: 0.72rem; color: var(--clr-text-dim); letter-spacing: 0.08em; }
+    .modal-3d__footer i { color: var(--clr-gold); margin-right: 5px; }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ AUTO-SCROLLING GALLERY
+    ════════════════════════════════════════════════════════════ */
+    #gallery { padding-block: clamp(60px, 8vw, 90px); overflow: hidden; }
+
+    .gallery__track-wrap { overflow: hidden; }
+    .gallery__track {
+      display: flex; gap: 16px;
+      width: max-content;
+      animation: marquee 28s linear infinite;
+    }
+    .gallery__track:hover { animation-play-state: paused; }
+
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    .gallery__item {
+      width: 268px; height: 210px;
+      border-radius: var(--radius-lg); overflow: hidden;
+      flex-shrink: 0; position: relative;
+      border: 1px solid rgba(212,168,75,0.1);
+    }
+    .gallery__item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.55s var(--ease-out);
+    }
+    .gallery__item:hover img { transform: scale(1.08); }
+    .gallery__item__caption {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(10,7,4,0.75), transparent 55%);
+      display: flex; align-items: flex-end; padding: 14px 16px;
+      opacity: 0; transition: opacity var(--dur-mid);
+    }
+    .gallery__item:hover .gallery__item__caption { opacity: 1; }
+    .gallery__item__caption span {
+      font-family: var(--font-accent); font-style: italic;
+      font-size: 0.92rem; color: var(--clr-text);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ TESTIMONIALS
+    ════════════════════════════════════════════════════════════ */
+    #testimonials { background: var(--clr-bg-2); }
+
+    .testimonials__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 24px;
+    }
+    .testi-card {
+      background: var(--clr-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      padding: 30px 28px; position: relative;
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      transition: transform var(--dur-mid) var(--ease-bounce), box-shadow var(--dur-mid);
+    }
+    .testi-card:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.45), 0 0 22px var(--clr-gold-glow-sm);
+      border-color: rgba(212,168,75,0.35);
+    }
+    .testi-card__quote { font-size: 3.5rem; line-height: 1; color: var(--clr-gold); opacity: 0.15; position: absolute; top: 14px; right: 18px; font-family: Georgia, serif; }
+    .testi-card__stars { color: var(--clr-gold); font-size: 0.8rem; margin-bottom: 14px; }
+    .testi-card__body {
+      font-family: var(--font-accent); font-style: italic;
+      font-size: 1.05rem; color: var(--clr-text); line-height: 1.7;
+      margin-bottom: 22px;
+    }
+    .testi-card__author { display: flex; align-items: center; gap: 12px; }
+    .testi-card__avatar {
+      width: 46px; height: 46px; border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(212,168,75,0.3);
+    }
+    .testi-card__name   { font-size: 0.88rem; font-weight: 600; color: var(--clr-white); }
+    .testi-card__locale { font-size: 0.72rem; color: var(--clr-text-dim); margin-top: 2px; }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ CONTACT / LOCATION SECTION
+    ════════════════════════════════════════════════════════════ */
+    /* ============================================================
+      📌 CLIENT DATA: ALL CONTACT INFO, MAP & PHONE ARE BELOW
+         Search for "CLIENT DATA: CONTACT" to update quickly.
+    ============================================================ */
+    #contact { background: var(--clr-bg); }
+
+    .contact__grid {
+      display: grid;
+      grid-template-columns: 1fr 1.35fr;
+      gap: clamp(40px, 6vw, 80px);
+      align-items: start;
+    }
+    .contact__info .section-head { text-align: left; margin-bottom: 30px; }
+    .contact__info .ornament     { justify-content: flex-start; }
+
+    .contact__item { display: flex; gap: 16px; margin-bottom: 26px; }
+    .contact__icon {
+      width: 46px; height: 46px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--clr-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--clr-gold); font-size: 1rem;
+    }
+    .contact__lbl { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--clr-gold); margin-bottom: 4px; }
+    .contact__val { font-size: 0.88rem; color: var(--clr-text-muted); line-height: 1.5; }
+    .contact__val a { color: var(--clr-text-muted); transition: color var(--dur-fast); }
+    .contact__val a:hover { color: var(--clr-gold); }
+
+    /* Hours */
+    .contact__hours { margin-top: 28px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .contact__hours h4 { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clr-gold); margin-bottom: 14px; }
+    .hours__row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .hours__day  { color: var(--clr-text-dim); }
+    .hours__time { color: var(--clr-text); font-weight: 500; }
+
+    /* Map embed */
+    .contact__map {
+      border-radius: var(--radius-xl); overflow: hidden;
+      border: 1px solid var(--glass-border);
+      height: clamp(300px, 45vw, 440px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
+    }
+    .contact__map iframe {
+      width: 100%; height: 100%; border: none; display: block;
+      filter: invert(0.92) hue-rotate(180deg) saturate(0.65) brightness(0.88);
+    }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ FOOTER
+    ════════════════════════════════════════════════════════════ */
+    footer {
+      background: #090705;
+      border-top: 1px solid rgba(212,168,75,0.1);
+      padding: clamp(48px,7vw,72px) clamp(20px,5vw,60px) 28px;
+    }
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      gap: clamp(32px,4vw,56px);
+      max-width: 1220px; margin-inline: auto;
+      margin-bottom: 44px;
+    }
+    .footer__brand p {
+      font-family: var(--font-accent); font-style: italic;
+      color: var(--clr-text-muted); font-size: 0.95rem;
+      line-height: 1.75; margin: 14px 0 22px;
+      max-width: 300px;
+    }
+    .footer__social { display: flex; gap: 10px; }
+    .footer__social a {
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--clr-bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      color: var(--clr-text-muted); font-size: 0.85rem;
+      transition: all var(--dur-fast) var(--ease-bounce);
+    }
+    .footer__social a:hover {
+      background: var(--clr-gold); border-color: var(--clr-gold);
+      color: #0C0A08; transform: translateY(-3px);
+    }
+    .footer__col h4 {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--clr-gold); margin-bottom: 18px;
+    }
+    .footer__col ul li { margin-bottom: 9px; }
+    .footer__col ul a { font-size: 0.83rem; color: var(--clr-text-muted); transition: color var(--dur-fast); }
+    .footer__col ul a:hover { color: var(--clr-text); }
+
+    .footer__bottom {
+      max-width: 1220px; margin-inline: auto;
+      padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer__bottom p { font-size: 0.76rem; color: var(--clr-text-dim); }
+    .footer__bottom .g { color: var(--clr-gold); }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ FLOATING WHATSAPP BUTTON
+    ════════════════════════════════════════════════════════════ */
+    /* ============================================================
+      📌 CLIENT DATA: WHATSAPP NUMBER IS ON THE <a> HREF BELOW
+         Search for "CLIENT DATA: WHATSAPP" to update.
+    ============================================================ */
+    #whatsapp-fab {
+      position: fixed; bottom: 28px; right: 28px; z-index: 700;
+      display: flex; align-items: center; gap: 0;
+      background: #25D366; color: #fff;
+      border-radius: var(--radius-pill);
+      height: 54px; padding: 0 18px;
+      box-shadow: 0 6px 28px rgba(37,211,102,0.42);
+      overflow: hidden;
+      transition: box-shadow var(--dur-mid), transform var(--dur-mid) var(--ease-bounce);
+      text-decoration: none;
+    }
+    #whatsapp-fab:hover { box-shadow: 0 10px 40px rgba(37,211,102,0.58); transform: translateY(-3px); }
+    .fab__icon { font-size: 1.5rem; flex-shrink: 0; transition: transform var(--dur-mid) var(--ease-bounce); }
+    #whatsapp-fab:hover .fab__icon { transform: rotate(-8deg) scale(1.15); }
+    .fab__label {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      max-width: 0; overflow: hidden; white-space: nowrap; opacity: 0;
+      transition: max-width 0.38s var(--ease-out), opacity 0.28s ease, margin 0.3s;
+    }
+    #whatsapp-fab:hover .fab__label { max-width: 100px; opacity: 1; margin-left: 10px; }
+
+    /* ════════════════════════════════════════════════════════════
+       ██ RESPONSIVE
+    ════════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .nav__links { display: none; }
+      .nav__burger { display: flex; }
+      .about__grid, .contact__grid { grid-template-columns: 1fr; }
+      .about__img-wrap { max-width: 500px; margin-inline: auto; }
+      .about__text .section-head { text-align: center; }
+      .about__text .ornament { justify-content: center; }
+      .contact__info .section-head { text-align: center; }
+      .contact__info .ornament { justify-content: center; }
+      .footer__grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .hero__frame { display: none; }
+      .hero__ctas  { flex-direction: column; align-items: center; }
+      .menu__grid  { grid-template-columns: 1fr; }
+      .footer__grid { grid-template-columns: 1fr; }
+      .footer__bottom { flex-direction: column; text-align: center; }
+      .about__stats { gap: 20px; }
+      #three-container { height: 300px; }
+      #whatsapp-fab { bottom: 18px; right: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+    ██ PRELOADER
+  ============================================================ -->
+  <div id="preloader" role="status" aria-label="Loading">
+    <!-- 🏷️ CLIENT DATA: CHANGE PRELOADER LOGO TEXT HERE -->
+    <div class="pre__logo">
+      <span class="pre__crown">♛</span> Royal Biryani House
+    </div>
+    <div class="pre__ring" aria-hidden="true"></div>
+    <!-- 🏷️ CLIENT DATA: CHANGE PRELOADER TAGLINE HERE -->
+    <p class="pre__tagline">Taste the Royal Legacy in Every Bite</p>
+  </div>
+
+  <!-- ============================================================
+    ██ NAVBAR
+  ============================================================ -->
+  <header id="navbar" role="banner">
+    <!-- 🏷️ CLIENT DATA: CHANGE NAV LOGO TEXT HERE -->
+    <a href="#hero" class="nav__logo" aria-label="Home">
+      <span class="nav__logo-icon" aria-hidden="true">♛</span>
+      Royal Biryani House
+    </a>
+
+    <nav class="nav__links" aria-label="Primary navigation">
+      <a href="#about">Story</a>
+      <a href="#menu">Menu</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#contact" class="btn btn--primary" style="padding:9px 22px;font-size:.72rem;">Reserve</a>
+    </nav>
+
+    <button class="nav__burger" id="nav-burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+
+  <!-- Mobile nav overlay -->
+  <nav class="nav__mobile" id="nav-mobile" aria-label="Mobile navigation" aria-hidden="true">
+    <a href="#about"        class="mob-link">Story</a>
+    <a href="#menu"         class="mob-link">Menu</a>
+    <a href="#gallery"      class="mob-link">Gallery</a>
+    <a href="#testimonials" class="mob-link">Reviews</a>
+    <a href="#contact"      class="mob-link">Contact</a>
+  </nav>
+
+  <!-- ============================================================
+    ██ HERO SECTION
+  ============================================================ -->
+  <section id="hero" aria-labelledby="hero-title">
+    <!-- 🎨 CLIENT DATA: CHANGE HERO BG IMAGE — see CSS .hero__bg rule above -->
+    <div class="hero__bg" role="img" aria-label="Luxury Biryani background"></div>
+    <div class="hero__overlay" aria-hidden="true"></div>
+    <div class="hero__frame"   aria-hidden="true"></div>
+
+    <div class="hero__content">
+      <!-- 🏷️ CLIENT DATA: CHANGE HERO BADGE TEXT HERE -->
+      <div class="hero__badge">Est. 1998 &nbsp;·&nbsp; New Delhi, India</div>
+
+      <!-- 🏷️ CLIENT DATA: CHANGE HERO TITLE HERE -->
+      <h1 class="hero__title" id="hero-title">
+        <span class="gold">Royal</span> Biryani<br/>House
+      </h1>
+
+      <!-- 🏷️ CLIENT DATA: CHANGE HERO TAGLINE HERE -->
+      <p class="hero__tagline">"Taste the Royal Legacy in Every Bite"</p>
+
+      <div class="hero__ctas">
+        <a href="#menu"       class="btn btn--primary"><i class="fa-solid fa-utensils" aria-hidden="true"></i> View Menu</a>
+        <a href="#contact"    class="btn btn--ghost"  ><i class="fa-solid fa-phone"    aria-hidden="true"></i> Reserve a Table</a>
+      </div>
+    </div>
+
+    <div class="hero__scroll" aria-hidden="true">
+      <span class="hero__scroll-text">Scroll</span>
+      <div class="hero__scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    ██ ABOUT SECTION
+  ============================================================ -->
+  <section id="about" class="section" aria-labelledby="about-title">
+    <div class="container">
+      <div class="about__grid">
+
+        <!-- About image -->
+        <div class="about__img-wrap reveal">
+          <!-- 🏷️ CLIENT DATA: CHANGE ABOUT IMAGE URL HERE -->
+          <img
+            src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=900&q=80&auto=format&fit=crop"
+            alt="Chef preparing Biryani in the Royal kitchen"
+            loading="lazy"
+          />
+          <!-- 🏷️ CLIENT DATA: CHANGE "YEARS" BADGE TEXT HERE -->
+          <div class="about__badge" aria-label="25 plus years of legacy">
+            <span class="about__badge-num">25+</span>
+            <span class="about__badge-text">Years of Legacy</span>
+          </div>
+        </div>
+
+        <!-- About text -->
+        <div class="about__text reveal" data-delay="2">
+          <div class="section-head">
+            <span class="section-head__eyebrow">Our Story</span>
+            <h2 class="section-head__title" id="about-title">
+              A Legacy Brewed in<br/><em>Saffron & Spice</em>
+            </h2>
+            <div class="ornament" aria-hidden="true">
+              <span class="ornament__line"></span>
+              <span class="ornament__gem"></span>
+              <span class="ornament__line ornament__line--rev"></span>
+            </div>
+          </div>
+
+          <!-- 🏷️ CLIENT DATA: CHANGE ABOUT BODY TEXT HERE -->
+          <p class="about__body">
+            Born in the walled lanes of Old Delhi in 1998, Royal Biryani House
+            began as a single family hearth where Nani Ji's spice blends were
+            guarded like crown jewels. Today those recipes feed thousands daily —
+            unchanged, un-compromised, unapologetically royal.
+          </p>
+          <p class="about__body">
+            Every grain of basmati is aged for 18 months. Every masala is
+            hand-ground at dawn. Every pot of dum biryani is sealed with dough
+            and kissed by live charcoal, exactly as it was in the Mughal kitchens
+            of Emperor Akbar's era.
+          </p>
+
+          <!-- 🏷️ CLIENT DATA: CHANGE STATS HERE -->
+          <div class="about__stats">
+            <div><span class="stat__num">50+</span><span class="stat__lbl">Signature Dishes</span></div>
+            <div><span class="stat__num">2M+</span><span class="stat__lbl">Happy Guests</span></div>
+            <div><span class="stat__num">4.9★</span><span class="stat__lbl">Avg. Rating</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    ██ MENU SECTION
+    All menu items below are CLIENT DATA — change name, price,
+    description, image, and data-model / data-name attributes.
+  ============================================================ -->
+  <section id="menu" class="section" aria-labelledby="menu-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-head__eyebrow">Curated Flavours</span>
+        <h2 class="section-head__title" id="menu-title">Our Royal <em>Menu</em></h2>
+        <div class="ornament" aria-hidden="true">
+          <span class="ornament__line"></span>
+          <span class="ornament__gem"></span>
+          <span class="ornament__line ornament__line--rev"></span>
+        </div>
+        <p class="section-head__sub">Century-old recipes, perfected over generations, served with regal elegance.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="menu__tabs reveal" data-delay="1" role="tablist" aria-label="Menu categories">
+        <!-- 🏷️ CLIENT DATA: CHANGE TAB LABELS HERE IF NEEDED -->
+        <button class="menu__tab active" role="tab" aria-selected="true"  data-target="starters" aria-controls="panel-starters">✦ Starters</button>
+        <button class="menu__tab"        role="tab" aria-selected="false" data-target="main"     aria-controls="panel-main">✦ Main Course</button>
+        <button class="menu__tab"        role="tab" aria-selected="false" data-target="biryani"  aria-controls="panel-biryani">♛ Biryani Special</button>
+        <button class="menu__tab"        role="tab" aria-selected="false" data-target="drinks"   aria-controls="panel-drinks">✦ Drinks</button>
+      </div>
+
+      <!-- ═══ PANEL: STARTERS ═══ -->
+      <div class="menu__panel active reveal-stagger" id="panel-starters" role="tabpanel">
+        <h3 class="menu__category-label">Royal Beginnings</h3>
+        <div class="menu__grid">
+
+          <!-- 🏷️ CLIENT DATA: STARTER CARD 1 — CHANGE IMAGE, NAME, PRICE, DESC, data-model, data-name -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=80&auto=format&fit=crop" alt="Shahi Seekh Kebab" loading="lazy"/>
+              <span class="menu-card__diet diet--nonveg">Non-Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Shahi Seekh Kebab</h4>
+                <span class="menu-card__price">₹349</span>
+              </div>
+              <p class="menu-card__desc">Minced lamb blended with royal spices, slow-cooked on charcoal skewers and served with saffron mint chutney.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add" aria-label="Add Shahi Seekh Kebab to order">Add +</button>
+                  <!-- NOTE: No 3D model assigned for starters — button omitted. Add data-model if you have one. -->
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: STARTER CARD 2 -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600&q=80&auto=format&fit=crop" alt="Nawabi Samosa" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Nawabi Samosa (4 pcs)</h4>
+                <span class="menu-card__price">₹199</span>
+              </div>
+              <p class="menu-card__desc">Crispy golden parcels filled with spiced potato, green peas, and our legendary royal masala blend.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add" aria-label="Add Nawabi Samosa to order">Add +</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: STARTER CARD 3 -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=600&q=80&auto=format&fit=crop" alt="Malai Paneer Tikka" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Malai Paneer Tikka</h4>
+                <span class="menu-card__price">₹329</span>
+              </div>
+              <p class="menu-card__desc">Cottage cheese marinated in saffron cream and herbs, grilled to perfection in a tandoor.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add" aria-label="Add Malai Paneer Tikka to order">Add +</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: STARTER CARD 4 -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1626100134126-2e3b5c62c3f8?w=600&q=80&auto=format&fit=crop" alt="Royal Chicken Tikka" loading="lazy"/>
+              <span class="menu-card__diet diet--nonveg">Non-Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Royal Chicken Tikka</h4>
+                <span class="menu-card__price">₹399</span>
+              </div>
+              <p class="menu-card__desc">Tender chicken marinated overnight in 18-spice royal mix and yoghurt, flame-kissed in the tandoor.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add" aria-label="Add Royal Chicken Tikka to order">Add +</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div><!-- /panel-starters -->
+
+      <!-- ═══ PANEL: MAIN COURSE ═══ -->
+      <div class="menu__panel" id="panel-main" role="tabpanel">
+        <h3 class="menu__category-label">The Royal Feast</h3>
+        <div class="menu__grid">
+
+          <!-- 🏷️ CLIENT DATA: MAIN CARD 1 — Butter Chicken with 3D model -->
+          <!-- ✅ 3D MODEL: data-model points to your local GLB file -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80&auto=format&fit=crop" alt="Mughal Butter Chicken" loading="lazy"/>
+              <span class="menu-card__diet diet--nonveg">Non-Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Mughal Butter Chicken</h4>
+                <span class="menu-card__price">₹449</span>
+              </div>
+              <p class="menu-card__desc">Smoky tandoor chicken in a velvety tomato-cream gravy enriched with cashew paste and dried fenugreek.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                  <!-- 🏷️ CLIENT DATA: CHANGE data-model PATH AND data-name IF NEEDED -->
+                  <button
+                    class="btn-3d open-3d-modal"
+                    data-model="models/butter_chicken_set.glb"
+                    data-name="Mughal Butter Chicken"
+                    aria-label="View Mughal Butter Chicken in 3D"
+                  ><i class="fa-solid fa-cube" aria-hidden="true"></i> 3D View</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: MAIN CARD 2 -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=600&q=80&auto=format&fit=crop" alt="Royal Dal Makhani" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Royal Dal Makhani</h4>
+                <span class="menu-card__price">₹299</span>
+              </div>
+              <p class="menu-card__desc">Black lentils slow-simmered for 12 hours with whole spices, aged butter and fresh cream. Emperor's comfort.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: MAIN CARD 3 -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=600&q=80&auto=format&fit=crop" alt="Kashmiri Rogan Josh" loading="lazy"/>
+              <span class="menu-card__diet diet--nonveg">Non-Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Kashmiri Rogan Josh</h4>
+                <span class="menu-card__price">₹549</span>
+              </div>
+              <p class="menu-card__desc">Slow-braised lamb in deep Kashmiri red gravy with whole spices, dried rose petals, and Rishta chilli.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: MAIN CARD 4 -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80&auto=format&fit=crop" alt="Shahi Paneer Makhani" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Shahi Paneer Makhani</h4>
+                <span class="menu-card__price">₹379</span>
+              </div>
+              <p class="menu-card__desc">Fresh cottage cheese cubes in a silky saffron-tomato gravy — a vegetarian royal indulgence.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div><!-- /panel-main -->
+
+      <!-- ═══ PANEL: BIRYANI SPECIAL ═══ -->
+      <div class="menu__panel" id="panel-biryani" role="tabpanel">
+        <h3 class="menu__category-label">The Crown Jewels — Dum Biryani</h3>
+        <div class="menu__grid">
+
+          <!-- 🏷️ CLIENT DATA: BIRYANI CARD 1 — with 3D model -->
+          <!-- ✅ 3D MODEL: uses shared best_biryani.glb -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=80&auto=format&fit=crop" alt="Shahi Mutton Biryani" loading="lazy"/>
+              <span class="menu-card__diet diet--nonveg">Non-Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Shahi Mutton Biryani</h4>
+                <span class="menu-card__price">₹499</span>
+              </div>
+              <p class="menu-card__desc">Aged basmati layered with slow-cooked mutton, caramelised onions, saffron milk, and silver leaf.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                  <!-- 🏷️ CLIENT DATA: CHANGE data-model PATH AND data-name IF NEEDED -->
+                  <button
+                    class="btn-3d open-3d-modal"
+                    data-model="models/best_biryani.glb"
+                    data-name="Shahi Mutton Biryani"
+                    aria-label="View Shahi Mutton Biryani in 3D"
+                  ><i class="fa-solid fa-cube" aria-hidden="true"></i> 3D View</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: BIRYANI CARD 2 — with 3D model -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=600&q=80&auto=format&fit=crop" alt="Hyderabadi Chicken Dum" loading="lazy"/>
+              <span class="menu-card__diet diet--nonveg">Non-Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Hyderabadi Chicken Dum</h4>
+                <span class="menu-card__price">₹429</span>
+              </div>
+              <p class="menu-card__desc">The legendary kacchi biryani — raw marinated chicken sealed with dough and slow-cooked over live charcoal.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                  <!-- 🏷️ CLIENT DATA: CHANGE data-model PATH AND data-name IF NEEDED -->
+                  <button
+                    class="btn-3d open-3d-modal"
+                    data-model="models/best_biryani.glb"
+                    data-name="Hyderabadi Chicken Dum"
+                    aria-label="View Hyderabadi Chicken Dum in 3D"
+                  ><i class="fa-solid fa-cube" aria-hidden="true"></i> 3D View</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: BIRYANI CARD 3 — with 3D model -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600&q=80&auto=format&fit=crop" alt="Garden Veg Biryani" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Garden Veg Biryani</h4>
+                <span class="menu-card__price">₹349</span>
+              </div>
+              <p class="menu-card__desc">Seasonal vegetables, paneer, and dry fruits cooked dum style with fragrant rose water and whole spices.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                  <!-- 🏷️ CLIENT DATA: CHANGE data-model PATH AND data-name IF NEEDED -->
+                  <button
+                    class="btn-3d open-3d-modal"
+                    data-model="models/best_biryani.glb"
+                    data-name="Garden Veg Biryani"
+                    aria-label="View Garden Veg Biryani in 3D"
+                  ><i class="fa-solid fa-cube" aria-hidden="true"></i> 3D View</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 🏷️ CLIENT DATA: BIRYANI CARD 4 — with 3D model -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=80&auto=format&fit=crop" alt="Coastal Prawn Biryani" loading="lazy"/>
+              <span class="menu-card__diet diet--nonveg">Non-Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Coastal Prawn Biryani</h4>
+                <span class="menu-card__price">₹599</span>
+              </div>
+              <p class="menu-card__desc">Juicy tiger prawns in a coconut-tomato masala, layered with saffron rice — a rare coastal-royal treasure.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions">
+                  <button class="btn-add">Add +</button>
+                  <!-- 🏷️ CLIENT DATA: CHANGE data-model PATH AND data-name IF NEEDED -->
+                  <button
+                    class="btn-3d open-3d-modal"
+                    data-model="models/best_biryani.glb"
+                    data-name="Coastal Prawn Biryani"
+                    aria-label="View Coastal Prawn Biryani in 3D"
+                  ><i class="fa-solid fa-cube" aria-hidden="true"></i> 3D View</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div><!-- /panel-biryani -->
+
+      <!-- ═══ PANEL: DRINKS ═══ -->
+      <div class="menu__panel" id="panel-drinks" role="tabpanel">
+        <h3 class="menu__category-label">Royal Elixirs</h3>
+        <div class="menu__grid">
+
+          <!-- 🏷️ CLIENT DATA: DRINKS CARDS — change as needed -->
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80&auto=format&fit=crop" alt="Royal Mango Lassi" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Royal Mango Lassi</h4>
+                <span class="menu-card__price">₹149</span>
+              </div>
+              <p class="menu-card__desc">Thick Alphonso mango blended with hung yoghurt, cardamom and saffron cream on top.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions"><button class="btn-add">Add +</button></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80&auto=format&fit=crop" alt="Persian Rose Sharbat" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Persian Rose Sharbat</h4>
+                <span class="menu-card__price">₹129</span>
+              </div>
+              <p class="menu-card__desc">Cold-pressed Damask rose water with basil seeds, raw honey and chilled sparkling water.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions"><button class="btn-add">Add +</button></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80&auto=format&fit=crop" alt="Kashmiri Kahwa" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Kashmiri Kahwa</h4>
+                <span class="menu-card__price">₹179</span>
+              </div>
+              <p class="menu-card__desc">Saffron, cinnamon, cardamom and almonds steeped in premium Kashmiri green tea.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions"><button class="btn-add">Add +</button></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="menu-card">
+            <div class="menu-card__img-wrap">
+              <img class="menu-card__img" src="https://images.unsplash.com/photo-1587314168485-3236d6710814?w=600&q=80&auto=format&fit=crop" alt="Nawabi Thandai" loading="lazy"/>
+              <span class="menu-card__diet diet--veg">Veg</span>
+            </div>
+            <div class="menu-card__body">
+              <div class="menu-card__header">
+                <h4 class="menu-card__name">Nawabi Thandai</h4>
+                <span class="menu-card__price">₹169</span>
+              </div>
+              <p class="menu-card__desc">Chilled milk with fennel, poppy seeds, rose petals and pistachios — Holi royalty in a glass.</p>
+              <div class="menu-card__footer">
+                <span class="menu-card__stars">★★★★★</span>
+                <div class="menu-card__actions"><button class="btn-add">Add +</button></div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div><!-- /panel-drinks -->
+
+    </div><!-- /container -->
+  </section>
+
+  <!-- ============================================================
+    ██ 3D MODEL MODAL
+  ============================================================ -->
+  <div id="modal-3d" role="dialog" aria-modal="true" aria-labelledby="modal-dish-title">
+    <div class="modal-3d__backdrop" id="modal-backdrop"></div>
+    <div class="modal-3d__box">
+
+      <div class="modal-3d__header">
+        <!-- JS will set this text dynamically from data-name attribute -->
+        <h3 id="modal-dish-title">3D Dish View</h3>
+        <button class="modal-3d__close" id="modal-close-btn" aria-label="Close 3D viewer">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <!-- Three.js render area -->
+      <div id="three-container">
+        <!-- Canvas is inserted here by JS -->
+
+        <!-- Loading overlay — shown until model is 100% loaded -->
+        <div id="model-loader" aria-live="polite" aria-label="Loading 3D model">
+          <div class="loader__ring" aria-hidden="true"></div>
+          <p class="loader__text">Loading 3D Model<span id="loader-pct">... 0%</span></p>
+        </div>
+      </div>
+
+      <div class="modal-3d__footer">
+        <p><i class="fa-solid fa-hand-pointer" aria-hidden="true"></i> Drag to rotate &nbsp;·&nbsp; Scroll / pinch to zoom</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+    ██ AUTO-SCROLLING GALLERY
+  ============================================================ -->
+  <section id="gallery" aria-label="Photo gallery">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-head__eyebrow">Visual Feast</span>
+        <h2 class="section-head__title">A Glimpse of <em>Royalty</em></h2>
+      </div>
+    </div>
+
+    <div class="gallery__track-wrap" aria-label="Scrolling food gallery">
+      <!-- The track is duplicated to create a seamless infinite loop -->
+      <div class="gallery__track">
+        <!-- 🏷️ CLIENT DATA: REPLACE GALLERY IMAGES HERE -->
+        <div class="gallery__item"><img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=70&auto=format&fit=crop" alt="Biryani"/><div class="gallery__item__caption"><span>Shahi Mutton Biryani</span></div></div>
+        <div class="gallery__item"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=70&auto=format&fit=crop" alt="Butter Chicken"/><div class="gallery__item__caption"><span>Mughal Butter Chicken</span></div></div>
+        <div class="gallery__item"><img src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=70&auto=format&fit=crop" alt="Kebabs"/><div class="gallery__item__caption"><span>Shahi Seekh Kebabs</span></div></div>
+        <div class="gallery__item"><img src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&q=70&auto=format&fit=crop" alt="Royal Kitchen"/><div class="gallery__item__caption"><span>The Royal Kitchen</span></div></div>
+        <div class="gallery__item"><img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=600&q=70&auto=format&fit=crop" alt="Hyderabadi Dum"/><div class="gallery__item__caption"><span>Hyderabadi Dum</span></div></div>
+        <div class="gallery__item"><img src="https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=600&q=70&auto=format&fit=crop" alt="Paneer Tikka"/><div class="gallery__item__caption"><span>Malai Paneer Tikka</span></div></div>
+        <!-- Duplicate set for seamless looping -->
+        <div class="gallery__item" aria-hidden="true"><img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&q=70&auto=format&fit=crop" alt=""/></div>
+        <div class="gallery__item" aria-hidden="true"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=70&auto=format&fit=crop" alt=""/></div>
+        <div class="gallery__item" aria-hidden="true"><img src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&q=70&auto=format&fit=crop" alt=""/></div>
+        <div class="gallery__item" aria-hidden="true"><img src="https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=600&q=70&auto=format&fit=crop" alt=""/></div>
+        <div class="gallery__item" aria-hidden="true"><img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=600&q=70&auto=format&fit=crop" alt=""/></div>
+        <div class="gallery__item" aria-hidden="true"><img src="https://images.unsplash.com/photo-1574653853027-5382a3d23a15?w=600&q=70&auto=format&fit=crop" alt=""/></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    ██ TESTIMONIALS
+  ============================================================ -->
+  <section id="testimonials" class="section" aria-labelledby="testi-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="section-head__eyebrow">Guest Chronicles</span>
+        <h2 class="section-head__title" id="testi-title">What Royals <em>Say</em></h2>
+        <div class="ornament" aria-hidden="true">
+          <span class="ornament__line"></span><span class="ornament__gem"></span><span class="ornament__line ornament__line--rev"></span>
+        </div>
+      </div>
+
+      <div class="testimonials__grid">
+
+        <!-- 🏷️ CLIENT DATA: CHANGE TESTIMONIALS TEXT, NAMES, PHOTOS HERE -->
+        <article class="testi-card reveal" data-delay="1">
+          <div class="testi-card__quote" aria-hidden="true">"</div>
+          <div class="testi-card__stars" aria-label="5 stars">★★★★★</div>
+          <p class="testi-card__body">The Shahi Mutton Biryani literally transported me to the Mughal courts. Every grain was infused with flavour I've never encountered elsewhere in Delhi.</p>
+          <div class="testi-card__author">
+            <img class="testi-card__avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80&auto=format&fit=crop&crop=face" alt="Arjun Mehta" loading="lazy"/>
+            <div>
+              <p class="testi-card__name">Arjun Mehta</p>
+              <p class="testi-card__locale">Food Blogger, New Delhi</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="testi-card reveal" data-delay="2">
+          <div class="testi-card__quote" aria-hidden="true">"</div>
+          <div class="testi-card__stars" aria-label="5 stars">★★★★★</div>
+          <p class="testi-card__body">We hosted our wedding reception here and every single guest is still talking about the food months later. Absolutely magnificent service and flavour.</p>
+          <div class="testi-card__author">
+            <img class="testi-card__avatar" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80&auto=format&fit=crop&crop=face" alt="Priya Sharma" loading="lazy"/>
+            <div>
+              <p class="testi-card__name">Priya Sharma</p>
+              <p class="testi-card__locale">Event Manager, Mumbai</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="testi-card reveal" data-delay="3">
+          <div class="testi-card__quote" aria-hidden="true">"</div>
+          <div class="testi-card__stars" aria-label="5 stars">★★★★★</div>
+          <p class="testi-card__body">As a food critic who has dined at Michelin-starred establishments worldwide, Royal Biryani House stands in its own league. A crown jewel of Indian cuisine.</p>
+          <div class="testi-card__author">
+            <img class="testi-card__avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80&auto=format&fit=crop&crop=face" alt="Rajiv Nair" loading="lazy"/>
+            <div>
+              <p class="testi-card__name">Rajiv Nair</p>
+              <p class="testi-card__locale">Culinary Critic, Bangalore</p>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    ██ CONTACT & LOCATION SECTION
+    ============================================================
+    📌 CLIENT DATA: CONTACT — UPDATE ALL DETAILS BELOW
+    ============================================================ -->
+  <section id="contact" class="section" aria-labelledby="contact-title">
+    <div class="container">
+      <div class="contact__grid">
+
+        <!-- Contact Info -->
+        <div class="contact__info reveal">
+          <div class="section-head">
+            <span class="section-head__eyebrow">Visit Us</span>
+            <h2 class="section-head__title" id="contact-title">Find the <em>Palace</em></h2>
+            <div class="ornament" aria-hidden="true">
+              <span class="ornament__line"></span><span class="ornament__gem"></span><span class="ornament__line ornament__line--rev"></span>
+            </div>
+          </div>
+
+          <address style="font-style:normal;">
+
+            <!-- 🏷️ CLIENT DATA: CONTACT — CHANGE ADDRESS HERE -->
+            <div class="contact__item">
+              <div class="contact__icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></div>
+              <div>
+                <p class="contact__lbl">Address</p>
+                <p class="contact__val">12, Chandni Chowk Marg, Connaught Place<br/>New Delhi — 110001, India</p>
+              </div>
+            </div>
+
+            <!-- 🏷️ CLIENT DATA: CONTACT — CHANGE PHONE NUMBERS HERE -->
+            <div class="contact__item">
+              <div class="contact__icon" aria-hidden="true"><i class="fa-solid fa-phone"></i></div>
+              <div>
+                <p class="contact__lbl">Reservations</p>
+                <p class="contact__val">
+                  <a href="tel:+911140001234">+91 11 4000 1234</a><br/>
+                  <a href="tel:+919876543210">+91 98765 43210</a>
+                </p>
+              </div>
+            </div>
+
+            <!-- 🏷️ CLIENT DATA: CONTACT — CHANGE EMAIL HERE -->
+            <div class="contact__item">
+              <div class="contact__icon" aria-hidden="true"><i class="fa-solid fa-envelope"></i></div>
+              <div>
+                <p class="contact__lbl">Email</p>
+                <p class="contact__val">
+                  <a href="mailto:reservations@royalbiryanihouse.in">reservations@royalbiryanihouse.in</a>
+                </p>
+              </div>
+            </div>
+
+          </address>
+
+          <!-- 🏷️ CLIENT DATA: CONTACT — CHANGE OPENING HOURS HERE -->
+          <div class="contact__hours">
+            <h4>Opening Hours</h4>
+            <div class="hours__row"><span class="hours__day">Mon – Thu</span><span class="hours__time">12 PM – 11 PM</span></div>
+            <div class="hours__row"><span class="hours__day">Friday</span>   <span class="hours__time">12 PM – 12 AM</span></div>
+            <div class="hours__row"><span class="hours__day">Saturday</span> <span class="hours__time">11 AM – 12 AM</span></div>
+            <div class="hours__row"><span class="hours__day">Sunday</span>   <span class="hours__time">11 AM – 11 PM</span></div>
+          </div>
+        </div>
+
+        <!-- ============================================================
+          📌 CLIENT DATA: CONTACT — CHANGE MAP IFRAME SRC HERE
+          Replace the src URL with an embed for your client's address.
+          Go to Google Maps → Share → Embed a map → Copy iframe src.
+        ============================================================ -->
+        <div class="contact__map reveal" data-delay="2" aria-label="Restaurant location on map">
+          <iframe
+            title="Royal Biryani House location — Connaught Place, New Delhi"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3502.0454974055285!2d77.21629231508437!3d28.632604282413!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd37b741d057%3A0xcdee88e47393c3f1!2sConnaught%20Place%2C%20New%20Delhi!5e0!3m2!1sen!2sin!4v1691234567890!5m2!1sen!2sin"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+    ██ FOOTER
+  ============================================================ -->
+  <footer role="contentinfo">
+    <div class="footer__grid">
+
+      <!-- Brand -->
+      <div class="footer__brand">
+        <!-- 🏷️ CLIENT DATA: CHANGE FOOTER BRAND TEXT HERE -->
+        <a href="#hero" class="nav__logo" aria-label="Home">
+          <span class="nav__logo-icon" aria-hidden="true">♛</span> Royal Biryani House
+        </a>
+        <p>Where every grain of rice carries the soul of a royal kitchen and every spice tells a story older than the Mughal empire itself.</p>
+
+        <!-- 🏷️ CLIENT DATA: CHANGE SOCIAL MEDIA LINKS HERE -->
+        <div class="footer__social" aria-label="Social media">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="X / Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <nav class="footer__col" aria-label="Site links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#about">Our Story</a></li>
+          <li><a href="#menu">Menu</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Signature dishes -->
+      <nav class="footer__col" aria-label="Signature dishes">
+        <h4>Signature</h4>
+        <ul>
+          <li><a href="#menu">Shahi Mutton Biryani</a></li>
+          <li><a href="#menu">Hyderabadi Chicken Dum</a></li>
+          <li><a href="#menu">Mughal Butter Chicken</a></li>
+          <li><a href="#menu">Kashmiri Rogan Josh</a></li>
+          <li><a href="#menu">Royal Dal Makhani</a></li>
+        </ul>
+      </nav>
+
+      <!-- Info -->
+      <nav class="footer__col" aria-label="Info">
+        <h4>Information</h4>
+        <ul>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Allergen Info</a></li>
+          <li><a href="#">Catering</a></li>
+          <li><a href="#">Franchise</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </nav>
+
+    </div>
+
+    <div class="footer__bottom">
+      <!-- 🏷️ CLIENT DATA: CHANGE FOOTER COPYRIGHT TEXT HERE -->
+      <p>© 2025 <span class="g">Royal Biryani House</span>. All Rights Reserved.</p>
+      <p>Crafted with <span class="g">♥</span> in New Delhi, India</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+    ██ FLOATING WHATSAPP BUTTON
+    📌 CLIENT DATA: WHATSAPP — CHANGE NUMBER IN HREF BELOW
+    Format: https://wa.me/[COUNTRY CODE][NUMBER]
+    Example for +91 98765 43210 → https://wa.me/919876543210
+  ============================================================ -->
+  <a
+    id="whatsapp-fab"
+    href="https://wa.me/919876543210?text=Hi%20Royal%20Biryani%20House!%20I%27d%20like%20to%20place%20an%20order."
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Order via WhatsApp"
+    title="Order on WhatsApp"
+  >
+    <i class="fa-brands fa-whatsapp fab__icon" aria-hidden="true"></i>
+    <span class="fab__label">Order Now</span>
+  </a>
+
+
+  <!-- ============================================================
+    ██████ JAVASCRIPT
+    Sections:
+      1.  Preloader
+      2.  Sticky navbar
+      3.  Mobile nav toggle
+      4.  Menu tabs
+      5.  Scroll reveal (IntersectionObserver)
+      6.  3D Modal open / close
+      7.  Three.js engine — GLTFLoader, lighting, OrbitControls,
+          memory-safe cleanup, load-progress overlay
+  ============================================================ -->
+  <script>
+  /* ─────────────────────────────────────────────────────────────
+     1. PRELOADER — dismiss on window load
+  ───────────────────────────────────────────────────────────── */
+  window.addEventListener('load', function () {
+    // Small pause so the animation can complete gracefully before hiding
+    setTimeout(function () {
+      var pre = document.getElementById('preloader');
+      if (pre) pre.classList.add('out');
+    }, 900);
+  });
+
+
+  /* ─────────────────────────────────────────────────────────────
+     2. STICKY NAVBAR — toggle .scrolled class on scroll
+  ───────────────────────────────────────────────────────────── */
+  (function () {
+    var navbar = document.getElementById('navbar');
+    function onScroll() {
+      navbar.classList.toggle('scrolled', window.scrollY > 55);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+
+  /* ─────────────────────────────────────────────────────────────
+     3. MOBILE NAV — hamburger open / close
+  ───────────────────────────────────────────────────────────── */
+  (function () {
+    var burger    = document.getElementById('nav-burger');
+    var mobileNav = document.getElementById('nav-mobile');
+    var links     = mobileNav.querySelectorAll('.mob-link');
+
+    function toggle() {
+      var isOpen = mobileNav.classList.toggle('open');
+      burger.classList.toggle('open', isOpen);
+      burger.setAttribute('aria-expanded', isOpen);
+      mobileNav.setAttribute('aria-hidden', !isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    burger.addEventListener('click', toggle);
+    links.forEach(function (l) { l.addEventListener('click', toggle); });
+  })();
+
+
+  /* ─────────────────────────────────────────────────────────────
+     4. MENU TABS — show / hide category panels
+  ───────────────────────────────────────────────────────────── */
+  (function () {
+    var tabs   = document.querySelectorAll('.menu__tab');
+    var panels = document.querySelectorAll('.menu__panel');
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = this.getAttribute('data-target');
+
+        // Deactivate all tabs & panels
+        tabs.forEach(function (t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+        panels.forEach(function (p) { p.classList.remove('active'); });
+
+        // Activate selected
+        this.classList.add('active');
+        this.setAttribute('aria-selected', 'true');
+        var panel = document.getElementById('panel-' + target);
+        if (panel) panel.classList.add('active');
+      });
+    });
+  })();
+
+
+  /* ─────────────────────────────────────────────────────────────
+     5. SCROLL REVEAL — IntersectionObserver-based fade-up
+  ───────────────────────────────────────────────────────────── */
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+
+    if (!('IntersectionObserver' in window)) {
+      // Graceful fallback for very old browsers
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target); // fire once
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+
+  /* ─────────────────────────────────────────────────────────────
+     6. 3D MODAL — open / close, pass model path & dish name to engine
+  ───────────────────────────────────────────────────────────── */
+  (function () {
+    var modal     = document.getElementById('modal-3d');
+    var backdrop  = document.getElementById('modal-backdrop');
+    var closeBtn  = document.getElementById('modal-close-btn');
+    var titleEl   = document.getElementById('modal-dish-title');
+    var triggers  = document.querySelectorAll('.open-3d-modal');
+
+    /* Open modal and trigger GLB load */
+    function openModal(modelPath, dishName) {
+      titleEl.textContent = dishName + ' — 3D View';
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      // Delegate to Three.js engine
+      ThreeEngine.load(modelPath);
+    }
+
+    /* Close modal and clean up GPU resources */
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+
+      // PERFORMANCE FIX: clean up GPU memory when modal closes
+      ThreeEngine.dispose();
+    }
+
+    triggers.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var modelPath = this.getAttribute('data-model');
+        var dishName  = this.getAttribute('data-name');
+        openModal(modelPath, dishName);
+      });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+
+    // Keyboard: Escape closes
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+  })();
+
+
+  /* ─────────────────────────────────────────────────────────────
+     7. THREE.JS ENGINE
+     Uses a module-like IIFE pattern so all state is private.
+     Exposes two public methods:
+       ThreeEngine.load(modelPath) — load & display a GLB model
+       ThreeEngine.dispose()       — clean up scene + stop RAF
+  ───────────────────────────────────────────────────────────── */
+  var ThreeEngine = (function () {
+
+    /* ── Internal state variables ── */
+    var renderer, scene, camera, controls;
+    var rafId        = null;   // requestAnimationFrame handle
+    var currentModel = null;   // reference to the last loaded model group
+    var initialized  = false;  // renderer created only once
+
+    var container = document.getElementById('three-container');
+    var loader_el = document.getElementById('model-loader');
+    var pct_el    = document.getElementById('loader-pct');
+
+    /* ────────────────────────────────────────
+       INIT — create renderer, scene, camera, lights
+       Called once on first load.
+    ──────────────────────────────────────── */
+    function init() {
+      if (initialized) return;
+      initialized = true;
+
+      /* Scene — force very dark background, never white */
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0d0b07);
+      scene.fog = new THREE.FogExp2(0x0d0b07, 0.06);
+
+      /* Camera */
+      camera = new THREE.PerspectiveCamera(
+        42,
+        container.clientWidth / container.clientHeight,
+        0.01, 200
+      );
+      camera.position.set(0, 1.2, 4.5);
+
+      /* Renderer */
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+      renderer.toneMapping       = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.3;
+      renderer.outputEncoding    = THREE.sRGBEncoding;
+      renderer.domElement.id     = 'three-canvas';
+      /* Insert canvas BEFORE the loader overlay so loader stays on top */
+      container.insertBefore(renderer.domElement, loader_el);
+
+      /* ── Lights ── */
+
+      // Warm ambient fill
+      var ambient = new THREE.AmbientLight(0xfff4e0, 0.6);
+      scene.add(ambient);
+
+      // Main directional key-light (warm gold)
+      var dirLight = new THREE.DirectionalLight(0xffd27a, 2.8);
+      dirLight.position.set(4, 8, 6);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.set(1024, 1024);
+      dirLight.shadow.camera.near = 0.5;
+      dirLight.shadow.camera.far  = 60;
+      scene.add(dirLight);
+
+      // Spice rim-light from back-left (adds depth)
+      var rimLight = new THREE.PointLight(0xff6622, 1.6, 18);
+      rimLight.position.set(-5, 2, -4);
+      scene.add(rimLight);
+
+      // Cool blue kicker from below (stops flat look)
+      var kickLight = new THREE.PointLight(0x4466ff, 0.4, 12);
+      kickLight.position.set(3, -2, 2);
+      scene.add(kickLight);
+
+      // Soft top fill
+      var topLight = new THREE.DirectionalLight(0xffe8c0, 0.8);
+      topLight.position.set(0, 10, 0);
+      scene.add(topLight);
+
+      /* OrbitControls — mouse & touch drag/zoom */
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping   = true;
+      controls.dampingFactor   = 0.08;
+      controls.enablePan       = false;
+      controls.autoRotate      = true;
+      controls.autoRotateSpeed = 1.0;
+      controls.minDistance     = 1;
+      controls.maxDistance     = 20;
+      controls.minPolarAngle   = 0.2;
+      controls.maxPolarAngle   = Math.PI / 1.8;
+
+      /* Responsive resize */
+      window.addEventListener('resize', onResize, { passive: true });
+    }
+
+    /* ────────────────────────────────────────
+       RESIZE HANDLER
+    ──────────────────────────────────────── */
+    function onResize() {
+      if (!renderer) return;
+      var w = container.clientWidth;
+      var h = container.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
+
+    /* ────────────────────────────────────────
+       DISPOSE PREVIOUS MODEL — prevent memory leak
+       Traverses every object in the model group,
+       disposes geometry and material(s).
+    ──────────────────────────────────────── */
+    function disposeModel() {
+      if (!currentModel) return;
+
+      currentModel.traverse(function (obj) {
+        /* Dispose geometry buffer */
+        if (obj.geometry) {
+          obj.geometry.dispose();
+        }
+        /* Dispose material(s) — can be array or single */
+        if (obj.material) {
+          var mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+          mats.forEach(function (mat) {
+            /* Dispose all map textures to free GPU VRAM */
+            ['map','normalMap','roughnessMap','metalnessMap','aoMap',
+             'emissiveMap','envMap','lightMap','alphaMap'].forEach(function (key) {
+              if (mat[key]) mat[key].dispose();
+            });
+            mat.dispose();
+          });
+        }
+      });
+
+      scene.remove(currentModel);
+      currentModel = null;
+    }
+
+    /* ────────────────────────────────────────
+       SHOW / HIDE LOADER OVERLAY
+    ──────────────────────────────────────── */
+    function showLoader() {
+      pct_el.textContent = '... 0%';
+      loader_el.classList.remove('hidden');
+    }
+
+    function hideLoader() {
+      loader_el.classList.add('hidden');
+    }
+
+    /* ────────────────────────────────────────
+       ANIMATION LOOP
+    ──────────────────────────────────────── */
+    function animate() {
+      rafId = requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    /* ────────────────────────────────────────
+       PUBLIC: load(modelPath)
+       Loads a GLB file, shows progress overlay,
+       disposes previous model, then starts render.
+    ──────────────────────────────────────── */
+    function load(modelPath) {
+      /* Ensure scene / renderer exist */
+      init();
+
+      /* Stop previous render loop while loading */
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      /* Remove and dispose previous model */
+      disposeModel();
+
+      /* Show the loading overlay with 0% */
+      showLoader();
+
+      /* Check Three.js globals are available (deferred scripts) */
+      if (typeof THREE === 'undefined' || typeof THREE.GLTFLoader === 'undefined') {
+        console.error('[ThreeEngine] THREE or GLTFLoader not loaded yet.');
+        pct_el.textContent = ' — Error: library not ready';
+        return;
+      }
+
+      var gltfLoader = new THREE.GLTFLoader();
+
+      gltfLoader.load(
+        /* URL ──────────── */
+        modelPath,
+
+        /* onLoad ────────── */
+        function (gltf) {
+          var model = gltf.scene;
+
+          /* Centre and auto-scale model to fit viewport */
+          var box    = new THREE.Box3().setFromObject(model);
+          var size   = box.getSize(new THREE.Vector3());
+          var centre = box.getCenter(new THREE.Vector3());
+          var maxDim = Math.max(size.x, size.y, size.z);
+          var scale  = 2.5 / maxDim;   /* Target ~2.5 units tall */
+
+          model.scale.setScalar(scale);
+          model.position.sub(centre.multiplyScalar(scale));
+
+          /* Enable shadows on all meshes */
+          model.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow    = true;
+              child.receiveShadow = true;
+              /* Ensure sRGB encoding for all textures */
+              if (child.material && child.material.map) {
+                child.material.map.encoding = THREE.sRGBEncoding;
+              }
+            }
+          });
+
+          scene.add(model);
+          currentModel = model;
+
+          /* Auto-set camera to frame the model nicely */
+          camera.position.set(0, size.y * scale * 0.5, maxDim * scale * 2.2);
+          camera.lookAt(0, 0, 0);
+          controls.reset();
+
+          /* Hide loader and start render loop */
+          hideLoader();
+          animate();
+        },
+
+        /* onProgress ────── */
+        function (xhr) {
+          if (xhr.lengthComputable) {
+            var pct = Math.round((xhr.loaded / xhr.total) * 100);
+            pct_el.textContent = '... ' + pct + '%';
+
+            /* Hide loader at 100% (before onLoad fires for very fast loads) */
+            if (pct >= 100) hideLoader();
+          } else {
+            /* File size unknown — show spinner without percentage */
+            pct_el.textContent = '...';
+          }
+        },
+
+        /* onError ───────── */
+        function (err) {
+          console.error('[ThreeEngine] GLB load failed:', err);
+          pct_el.textContent = ' — Failed to load model';
+          /* Keep loader visible so user sees error, don't start loop */
+        }
+      );
+    }
+
+    /* ────────────────────────────────────────
+       PUBLIC: dispose()
+       Called when modal closes.
+       Stops RAF, disposes model, keeps renderer
+       alive for re-use (avoids WebGL context churn).
+    ──────────────────────────────────────── */
+    function dispose() {
+      /* Stop render loop immediately */
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      /* Dispose the loaded model to free VRAM */
+      disposeModel();
+
+      /* Reset loader UI */
+      showLoader();
+      pct_el.textContent = '... 0%';
+      /* Re-hide so it shows fresh on next open */
+      loader_el.classList.remove('hidden');
+    }
+
+    /* Return only the two public methods */
+    return { load: load, dispose: dispose };
+
+  })(); /* End ThreeEngine IIFE */
+  </script>
+
+</body>
+</html>
